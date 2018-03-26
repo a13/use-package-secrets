@@ -1,0 +1,54 @@
+* use-package-secrets
+** Installation
+   #+BEGIN_SRC emacs-lisp
+     (use-package use-package-secrets
+       :ensure nil
+       :custom
+       (use-package-secrets-default-directory "~/docs/secrets")
+       :quelpa
+       (use-package-secrets :repo "a13/use-package-secrets" :fetcher github :version original))
+
+   #+END_SRC
+
+** Usage
+   #+BEGIN_SRC emacs-lisp
+     (use-package jabber
+       :secret
+       (jabber-connect-all "~/.secrets.el.gpg")
+       :config
+       (setq jabber-history-enabled t
+             jabber-use-global-history nil
+             fsm-debug nil))
+
+     (use-package slack
+       :secret
+       (slack-start "work.el.gpg")
+       :commands (slack-start)
+       :init
+       (setq slack-buffer-emojify t) ;; if you want to enable emoji, default nil
+       (setq slack-prefer-current-team t))
+
+   #+END_SRC
+
+   Where ~/.secrets.el.gpg is
+
+   #+BEGIN_SRC emacs-lisp
+     ;; -*- auto-save-default: nil; flycheck-mode: nil; -*-
+     (setq jabber-account-list (quote
+                                (("your-id@jabber.org/emacs"
+                                  (:password . "your-password")))))
+
+   #+END_SRC
+
+   And work.el.gpg looks like:
+   #+BEGIN_SRC emacs-lisp
+     ;; -*- auto-save-default: nil; flycheck-mode: nil; -*-
+     (slack-register-team
+      :name "emacs-slack"
+      :default t
+      :client-id "aaaaaaaaaaa.00000000000"
+      :client-secret "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      :token "aaaa-sssssssssss-88888888888-hhhhhhhhhhh-jjjjjjjjjj"
+      :subscribed-channels '(test-rename rrrrr)
+      :full-and-display-names t)
+   #+END_SRC
