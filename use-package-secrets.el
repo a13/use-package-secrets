@@ -23,7 +23,7 @@
 
 (require 'use-package)
 
-(defvar use-package-secrets-files nil
+(defvar use-package-secrets--files nil
   "List of loaded secret files.")
 
 (defgroup use-package-secrets nil
@@ -50,13 +50,14 @@
       (use-package-secrets-file-exists-p file "~/")))
 
 (defun use-package-secrets-load-files (&rest files)
+  "Try to load secret FILES."
   (dolist (file files)
-    (unless (member file use-package-secrets-files)
+    (unless (member file use-package-secrets--files)
       (if-let ((path (use-package-secrets-locate-file file)))
           (progn
             ;; TODO: add support to non-lisp password files
             (load-file path)
-            (add-to-list 'use-package-secrets-files file))
+            (add-to-list 'use-package-secrets--files file))
         (warn "file %s not found, skipped" file)))))
 
 (defun use-package-normalize/:secret (name keyword args)
@@ -65,8 +66,6 @@
       (cond
        ((and (listp arg) (stringp (car arg)))
         arg)
-       ;; ((and (listp arg) (symbolp (car arg)))
-       ;;  (list arg))
        (t (list arg))))))
 
 (defun use-package-handler/:secret (name keyword arg rest state)
@@ -83,17 +82,21 @@
              arg)
      body)))
 
+(defun use-package-secrets-find-file ()
+  "Find secret file."
+  (interactive)
+  (find-file (use-package-secrets-locate-file
+              (completing-read
+               "List of loaded secret files."
+               use-package-secrets--files))))
+
 (add-to-list 'use-package-keywords :secret t)
 
 ;; (when nil
 ;;   ;; Always load secret file when package
-;;   (use-package jabber
-;;     :secret "passwords.org.gpg")
-
-;;   ;; load secret file before function `slack-start' call
-;;   (use-package slack
-;;     :secret
-;;     (slack-start . "~/.secrets.el.gpg"))
+;; (use-package jabber
+;;   :secret
+;;    "~/.secrets.el.gpg")
 
 ;;   (use-package slack
 ;;     :secret
