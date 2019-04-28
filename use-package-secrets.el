@@ -21,6 +21,7 @@
 
 ;;; Code:
 
+(require 'subr-x)
 (require 'use-package)
 
 (defvar use-package-secrets--files nil
