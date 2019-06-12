@@ -2,11 +2,12 @@
 ** Installation
    #+BEGIN_SRC emacs-lisp
      (use-package use-package-secrets
-       :ensure nil
        :custom
        (use-package-secrets-default-directory "~/docs/secrets")
        :quelpa
-       (use-package-secrets :repo "a13/use-package-secrets" :fetcher github :version original))
+       (use-package-secrets :repo "a13/use-package-secrets"
+                            :fetcher github
+                            :version original))
 
    #+END_SRC
 
