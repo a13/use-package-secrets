@@ -93,27 +93,6 @@
 
 (add-to-list 'use-package-keywords :secret t)
 
-;; (when nil
-;;   ;; Always load secret file when package
-;; (use-package jabber
-;;   :secret
-;;    "~/.secrets.el.gpg")
-
-;;   (use-package slack
-;;     :secret
-;;     (slack-start "~/.secrets.el.gpg" "work.el.gpg"))
-
-;;   (use-package slack
-;;     :secret
-;;     (slack-start "work.el.gpg"))
-
-;;   (use-package slack
-;;     :secret
-;;     "pwd.el.gpg"
-;;     (slack-start "~/.secrets.el.gpg" "work.el.gpg")
-;;     "somemore.wtf")
-;;   )
-
 (provide 'use-package-secrets)
 
 ;;; use-package-secrets.el ends here
