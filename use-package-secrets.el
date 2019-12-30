@@ -76,7 +76,7 @@
                  `,(pcase secret-arg
                      (`(,fn . ,files)
                       `(define-advice ,fn
-                           (:before (&optional args))
+                           (:before (&optional _args))
                          (use-package-secrets-load-files ,@files)))
                      (file
                       `(use-package-secrets-load-files ,file))))
