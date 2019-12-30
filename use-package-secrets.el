@@ -1,8 +1,8 @@
-;;; use-package-secrets.el --- :secret keyword for use-package. -*- lexical-binding: t -*-
+;;; use-package-secrets.el --- A :secret keyword for use-package -*- lexical-binding: t -*-
 
 ;; Homepage: https://github.com/a13/use-package-secrets
-;; Version: 0.0.1
-;; Package-Requires: ((emacs "25.1") (use-package "2.1"))
+;; Version: 0.0.2
+;; Package-Requires: ((emacs "25.1") (use-package "2.1") (dash "2.11"))
 
 ;; This file is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -19,10 +19,13 @@
 
 ;;; Commentary:
 
+;; A package to advice .el(.gpg) file loadind to commands.
+
 ;;; Code:
 
 (require 'subr-x)
 (require 'use-package)
+(require 'dash)
 
 (defvar use-package-secrets--files nil
   "List of loaded secret files.")
@@ -31,24 +34,24 @@
   ":secret keyword"
   :group 'use-package)
 
-(defcustom use-package-secrets-default-directory nil
-  "Path to secrets storage."
-  :group 'use-package-secrets
-  :type 'directory)
 
-(defun use-package-secrets-file-exists-p (file &optional default-directory)
-  "Check if FILE exists in DEFAULT-DIRECTORY and return its full name."
-  (let ((filename (expand-file-name file default-directory)))
+(defcustom use-package-secrets-directories nil
+  "Paths to secrets storage."
+  :group 'use-package-secrets
+  :type '(repeat directory))
+
+(defun use-package-secrets-file-exists-p (file &optional directory)
+  "Check if FILE exists in DIRECTORY and return its full name."
+  (let ((filename (expand-file-name file directory)))
     (and (file-exists-p filename)
          filename)))
 
 (defun use-package-secrets-locate-file (file)
   "Try to locate FILE."
-  (or (and use-package-secrets-default-directory
-           (use-package-secrets-file-exists-p file use-package-secrets-default-directory))
-      (use-package-secrets-file-exists-p file)
-      (use-package-secrets-file-exists-p file user-emacs-directory)
-      (use-package-secrets-file-exists-p file "~/")))
+  (-some
+   (apply-partially #'use-package-secrets-file-exists-p file)
+   (cons nil use-package-secrets-directories)))
+
 
 (defun use-package-secrets-load-files (&rest files)
   "Try to load secret FILES."
@@ -61,15 +64,15 @@
             (add-to-list 'use-package-secrets--files file))
         (warn "file %s not found, skipped" file)))))
 
-(defun use-package-normalize/:secret (name keyword args)
+(defun use-package-normalize/:secret (_name keyword args)
   (use-package-as-one (symbol-name keyword) args
-    (lambda (label arg)
+    (lambda (_label arg)
       (cond
        ((and (listp arg) (stringp (car arg)))
         arg)
        (t (list arg))))))
 
-(defun use-package-handler/:secret (name keyword arg rest state)
+(defun use-package-handler/:secret (name _keyword arg rest state)
   (let ((body (use-package-process-keywords name rest state)))
     (use-package-concat
      (mapcar #'(lambda (secret-arg)
@@ -88,7 +91,7 @@
   (interactive)
   (find-file (use-package-secrets-locate-file
               (completing-read
-               "List of loaded secret files."
+               "Find secret file: "
                use-package-secrets--files))))
 
 (add-to-list 'use-package-keywords :secret t)

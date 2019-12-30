@@ -1,9 +1,12 @@
 * use-package-secrets
+
+NB: use-package-secrets-directories is obsolete since 0.0.2, you have to explicitly not all directories in use-package-secrets-directories.
+
 ** Installation
    #+BEGIN_SRC emacs-lisp
      (use-package use-package-secrets
        :custom
-       (use-package-secrets-default-directory "~/docs/secrets")
+       (use-package-secrets-directories '("~/docs/secrets"))
        :quelpa
        (use-package-secrets :repo "a13/use-package-secrets"
                             :fetcher github
@@ -31,7 +34,7 @@
 
    #+END_SRC
 
-   Where ~/.secrets.el.gpg is
+   Where ~/.secrets.el.gpg is (notice the first line)
 
    #+BEGIN_SRC emacs-lisp
      ;; -*- auto-save-default: nil; flycheck-mode: nil; -*-
