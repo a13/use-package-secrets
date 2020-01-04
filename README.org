@@ -1,6 +1,6 @@
 * use-package-secrets
 
-NB: use-package-secrets-directories is obsolete since 0.0.2, you have to explicitly not all directories in use-package-secrets-directories.
+NB: use-package-secrets-directories is obsolete since 0.0.2, you have to explicitly list all directories in use-package-secrets-directories.
 
 ** Installation
    #+BEGIN_SRC emacs-lisp
